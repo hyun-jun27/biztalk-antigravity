@@ -129,8 +129,8 @@ AI도 사람도 "끝"의 기준이 명확해야 헤매지 않습니다. 기준 �
 # Python 버전 확인 (3.11 이상)
 python --version
 
-# 패키지 설치
-pip install fastapi uvicorn langchain python-dotenv langchain-upstage
+# uv를 사용한 패키지 설치
+uv pip install fastapi uvicorn langchain python-dotenv langchain-upstage
 
 # Git 설치 확인
 git --version
@@ -297,7 +297,7 @@ FastAPI는 Swagger UI를 기본 제공하므로 서버가 기동 중인 상태�
 3. `.gitignore` 작성 — `.env` 반드시 포함
 4. Upstage API 키 발급 및 `.env` 파일 작성
 5. `backend/requirements.txt` 작성하고 의존성의 최신 버전(use context7)을 명시해야 함
-6. 가상환경(`.venv`) 폴더를 생성하고 `backend/requirements.txt` 명시된 의존성을 가상환경 폴더에 설치해야 함
+6. uv를 사용하여 가상환경(`.venv`) 폴더를 생성하고 `backend/requirements.txt`에 명시된 의존성을 설치해야 함 (`uv venv` 및 `uv pip install -r backend/requirements.txt`)
 
 ---
 

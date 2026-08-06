@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>업무 말투 변환기 — BizTalk Antigravity</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <main class="container">
+    <header>
+      <h1>BizTalk Antigravity</h1>
+      <p>하고 싶은 말을 자유롭게 쓰시면, 상황에 맞게 정중한 비즈니스 말투로 번역합니다.</p>
+    </header>
+
+    <!-- 수신 대상 선택 (4종) -->
+    <section class="form-group">
+      <span class="label">수신 대상</span>
+      <div class="target-container" role="radiogroup" aria-label="수신 대상 선택">
+        <button type="button" class="target-btn active" data-target="boss" role="radio" aria-checked="true">
+          <span class="icon">👔</span>
+          <span>상사 / 임원</span>
+        </button>
+        <button type="button" class="target-btn" data-target="colleague" role="radio" aria-checked="false">
+          <span class="icon">🤝</span>
+          <span>타팀 동료</span>
+        </button>
+        <button type="button" class="target-btn" data-target="client" role="radio" aria-checked="false">
+          <span class="icon">🌐</span>
+          <span>고객 / 외부</span>
+        </button>
+        <button type="button" class="target-btn" data-target="team" role="radio" aria-checked="false">
+          <span class="icon">👥</span>
+          <span>팀 내 동료</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 입력창 -->
+    <section class="form-group">
+      <label for="inputText" class="label">전달할 내용</label>
+      <textarea id="inputText" placeholder="예) 내일까지 보고서 제출 어려울 것 같음. 대신 다음주 월요일 아침엔 100% 가능."></textarea>
+    </section>
+
+    <!-- 변환 버튼 -->
+    <button type="button" id="btnConvert" class="btn-convert">
+      <span class="spinner" id="loadingSpinner"></span>
+      <span id="btnText">비즈니스 말투로 변환하기</span>
+    </button>
+
+    <!-- 결과 영역 (변환 완료 시 노출) -->
+    <section class="result-panel" id="resultPanel">
+      <div class="result-header">
+        <span class="label">변환 결과</span>
+        <button type="button" id="btnCopy" class="btn-copy">
+          <span>📋</span> 복사하기
+        </button>
+      </div>
+      <textarea id="outputText" readonly></textarea>
+    </section>
+  </main>
+
+  <!-- 토스트 알림창 -->
+  <div class="toast" id="toast">복사 완료! 필요한 곳에 붙여넣으세요.</div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
