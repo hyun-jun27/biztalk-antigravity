@@ -1,128 +1,142 @@
-// API Endpoint Base Address (In production / Vercel, this can be relative or dynamic)
-const API_BASE = window.location.origin;
+// API base URL configuration
+// 로컬 파일 실행(file:///) 시 로컬서버 호출, 동일 호스트 서빙 시 호스트 도메인 자동 타겟팅
+const API_BASE = window.location.origin.startsWith('file:') 
+    ? "http://localhost:8080" 
+    : window.location.origin;
 
-// DOM Elements
-const targetButtons = document.querySelectorAll(".target-btn");
-const inputText = document.getElementById("inputText");
-const btnConvert = document.getElementById("btnConvert");
-const btnText = document.getElementById("btnText");
-const loadingSpinner = document.getElementById("loadingSpinner");
-const resultPanel = document.getElementById("resultPanel");
-const outputText = document.getElementById("outputText");
-const btnCopy = document.getElementById("btnCopy");
-const toast = document.getElementById("toast");
+document.addEventListener("DOMContentLoaded", () => {
+    const inputText = document.getElementById("inputText");
+    const charCounter = document.getElementById("charCounter");
+    const targetButtons = document.querySelectorAll(".target-btn");
+    const convertBtn = document.getElementById("convertBtn");
+    const outputText = document.getElementById("outputText");
+    const copyBtn = document.getElementById("copyBtn");
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    const toast = document.getElementById("toast");
+    const toastMsg = document.getElementById("toastMsg");
 
-let activeTarget = "boss";
+    let selectedTarget = null;
 
-// 1. Target Audience Selection Toggle
-targetButtons.forEach(button => {
-    button.addEventListener("click", () => {
-        // Deactivate previous button
-        targetButtons.forEach(btn => {
-            btn.classList.remove("active");
-            btn.setAttribute("aria-checked", "false");
-        });
-
-        // Activate clicked button
-        button.classList.add("active");
-        button.setAttribute("aria-checked", "true");
-        activeTarget = button.dataset.target;
+    // 1. Character Counter
+    inputText.addEventListener("input", () => {
+        const length = inputText.value.length;
+        charCounter.textContent = `${length}자`;
     });
-});
 
-// 2. Loading State Toggle Controller
-function setLoading(isLoading) {
-    if (isLoading) {
-        btnConvert.disabled = true;
-        loadingSpinner.style.display = "block";
-        btnText.textContent = "변환 작업 진행 중...";
-    } else {
-        btnConvert.disabled = false;
-        loadingSpinner.style.display = "none";
-        btnText.textContent = "비즈니스 말투로 변환하기";
-    }
-}
-
-// 3. API Request for Tone Conversion
-async function convertTone() {
-    const text = inputText.value.trim();
-
-    if (!text) {
-        showToast("변환할 원본 내용을 입력해 주세요.", true);
-        inputText.focus();
-        return;
-    }
-
-    setLoading(true);
-
-    try {
-        const response = await fetch(`${API_BASE}/api/convert`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                text: text,
-                target_audience: activeTarget
-            })
+    // 2. Target Audience Selection (Single selection)
+    targetButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            targetButtons.forEach(b => b.classList.remove("active"));
+            
+            if (selectedTarget === btn.dataset.target) {
+                // Deselect if already active
+                selectedTarget = null;
+            } else {
+                btn.classList.add("active");
+                selectedTarget = btn.dataset.target;
+            }
         });
+    });
 
-        if (!response.ok) {
-            throw new Error(`HTTP Error: ${response.status}`);
+    // 3. Tone Conversion handler
+    convertBtn.addEventListener("click", async () => {
+        const text = inputText.value.trim();
+
+        if (!text) {
+            showToast("변환할 원본 내용을 입력해 주세요.", "warning");
+            inputText.focus();
+            return;
         }
 
-        const data = await response.json();
+        if (!selectedTarget) {
+            showToast("수신 대상을 선택해 주세요.", "warning");
+            return;
+        }
+
+        // Set Loading state UI
+        setLoading(true);
+
+        try {
+            const response = await fetch(`${API_BASE}/api/convert`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    text: text,
+                    target_audience: selectedTarget
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || "서버 응답 오류가 발생했습니다.");
+            }
+
+            const data = await response.json();
+            outputText.value = data.converted_text;
+            copyBtn.disabled = false;
+            showToast("성공적으로 변환되었습니다!", "success");
+
+        } catch (error) {
+            console.error("API Call Error:", error);
+            showToast(error.message || "변환 중 문제가 발생했습니다. 다시 시도해 주세요.", "error");
+        } finally {
+            setLoading(false);
+        }
+    });
+
+    // 4. Clipboard Copy Handler
+    copyBtn.addEventListener("click", async () => {
+        const textToCopy = outputText.value;
+        if (!textToCopy) return;
+
+        try {
+            await navigator.clipboard.writeText(textToCopy);
+            showToast("클립보드에 메시지가 복사되었습니다!", "success");
+        } catch (err) {
+            // Fallback for browsers that don't support navigator.clipboard
+            outputText.select();
+            document.execCommand("copy");
+            showToast("메시지가 선택 및 복사되었습니다!", "success");
+        }
+    });
+
+    // Loading State Helper
+    function setLoading(isLoading) {
+        if (isLoading) {
+            convertBtn.classList.add("loading");
+            convertBtn.disabled = true;
+            loadingOverlay.classList.add("active");
+        } else {
+            convertBtn.classList.remove("loading");
+            convertBtn.disabled = false;
+            loadingOverlay.classList.remove("active");
+        }
+    }
+
+    // Toast Alert Helper
+    function showToast(message, type = "success") {
+        toastMsg.textContent = message;
         
-        // Show result panel and set output text
-        resultPanel.style.display = "block";
-        outputText.value = data.converted_text;
-        
-        // Smoothly scroll down to the result if on mobile
-        resultPanel.scrollIntoView({ behavior: "smooth" });
+        // Dynamic Icon mapping
+        const icon = toast.querySelector("i");
+        icon.className = ""; // Reset
+        if (type === "success") {
+            icon.className = "fa-solid fa-circle-check";
+            toast.style.borderColor = "var(--accent-purple)";
+        } else if (type === "warning") {
+            icon.className = "fa-solid fa-triangle-exclamation";
+            toast.style.borderColor = "#f59e0b";
+        } else {
+            icon.className = "fa-solid fa-circle-xmark";
+            toast.style.borderColor = "#ef4444";
+        }
 
-    } catch (error) {
-        console.error("Conversion failed:", error);
-        showToast("변환 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.", true);
-    } finally {
-        setLoading(false);
+        toast.classList.add("active");
+
+        setTimeout(() => {
+            toast.classList.remove("active");
+        }, 3000);
     }
-}
-
-// 4. Clipboard Copy Handler
-async function copyToClipboard() {
-    const resultText = outputText.value;
-    if (!resultText) return;
-
-    try {
-        await navigator.clipboard.writeText(resultText);
-        showToast("📋 비즈니스 메시지가 클립보드에 복사되었습니다.");
-    } catch (err) {
-        // Fallback for older browsers
-        outputText.select();
-        document.execCommand("copy");
-        showToast("📋 텍스트가 복사되었습니다.");
-    }
-}
-
-// 5. Toast Message Controller
-let toastTimeout;
-function showToast(message, isWarning = false) {
-    clearTimeout(toastTimeout);
-    
-    toast.textContent = message;
-    if (isWarning) {
-        toast.style.borderColor = "#ef4444";
-    } else {
-        toast.style.borderColor = "var(--primary)";
-    }
-    
-    toast.classList.add("show");
-
-    toastTimeout = setTimeout(() => {
-        toast.classList.remove("show");
-    }, 3000);
-}
-
-// Event Listeners
-btnConvert.addEventListener("click", convertTone);
-btnCopy.addEventListener("click", copyToClipboard);
+});

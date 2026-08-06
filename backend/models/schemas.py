@@ -5,6 +5,6 @@ class ConvertRequest(BaseModel):
     target_audience: str = Field(..., description="수신 대상 (boss / colleague / client / team)")
 
 class ConvertResponse(BaseModel):
-    converted_text: str = Field(..., description="변환 완료된 비즈니스 텍스트")
-    target_audience: str = Field(..., description="적용된 수신 대상 코드")
-    original_text: str = Field(..., description="원본 텍스트")
+    converted_text: str = Field(..., description="변환된 비즈니스 텍스트")
+    target_audience: str = Field(..., description="수신 대상")
+    original_text: str = Field(..., description="변환하기 전 원본 텍스트")

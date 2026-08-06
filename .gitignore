@@ -1,8 +1,6 @@
 .env
-.agents
-subagent_skills_antigravity
-.venv/
 __pycache__/
 *.pyc
 .DS_Store
 node_modules/
+.venv/

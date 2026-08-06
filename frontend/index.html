@@ -1,69 +1,126 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>업무 말투 변환기 — BizTalk Antigravity</title>
-  <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizTalk Antigravity — 업무 말투 변환기</title>
+    <!-- Premium Typography: Outfit & Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <div class="stars-bg"></div>
+    <div class="glow-container">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+    </div>
 
-  <main class="container">
-    <header>
-      <h1>BizTalk Antigravity</h1>
-      <p>하고 싶은 말을 자유롭게 쓰시면, 상황에 맞게 정중한 비즈니스 말투로 번역합니다.</p>
-    </header>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">
+                <i class="fa-solid fa-wand-magic-sparkles brand-icon"></i>
+                <h1>BizTalk <span>Antigravity</span></h1>
+            </div>
+            <p class="subtitle">직장 생활의 품격을 높이는 AI 업무 말투 변환기</p>
+        </header>
 
-    <!-- 수신 대상 선택 (4종) -->
-    <section class="form-group">
-      <span class="label">수신 대상</span>
-      <div class="target-container" role="radiogroup" aria-label="수신 대상 선택">
-        <button type="button" class="target-btn active" data-target="boss" role="radio" aria-checked="true">
-          <span class="icon">👔</span>
-          <span>상사 / 임원</span>
-        </button>
-        <button type="button" class="target-btn" data-target="colleague" role="radio" aria-checked="false">
-          <span class="icon">🤝</span>
-          <span>타팀 동료</span>
-        </button>
-        <button type="button" class="target-btn" data-target="client" role="radio" aria-checked="false">
-          <span class="icon">🌐</span>
-          <span>고객 / 외부</span>
-        </button>
-        <button type="button" class="target-btn" data-target="team" role="radio" aria-checked="false">
-          <span class="icon">👥</span>
-          <span>팀 내 동료</span>
-        </button>
-      </div>
-    </section>
+        <main class="app-main">
+            <!-- Left Panel: Input Area -->
+            <section class="panel input-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-pen-nib"></i> 원본 본문 입력</h2>
+                    <span class="char-counter" id="charCounter">0자</span>
+                </div>
+                <div class="textarea-wrapper">
+                    <textarea id="inputText" placeholder="상사나 동료에게 보낼 날것의 생각이나 거친 메모를 여기에 적어보세요...&#10;예: 내일까지 보고서 제출 어려울 것 같음" maxlength="1000"></textarea>
+                </div>
 
-    <!-- 입력창 -->
-    <section class="form-group">
-      <label for="inputText" class="label">전달할 내용</label>
-      <textarea id="inputText" placeholder="예) 내일까지 보고서 제출 어려울 것 같음. 대신 다음주 월요일 아침엔 100% 가능."></textarea>
-    </section>
+                <div class="panel-section">
+                    <h3><i class="fa-solid fa-users"></i> 수신 대상 선택</h3>
+                    <div class="target-selector">
+                        <button type="button" class="target-btn" data-target="boss">
+                            <i class="fa-solid fa-user-tie"></i>
+                            <div class="btn-text">
+                                <span class="title">상사 / 임원</span>
+                                <span class="desc">격식 있고 공손하게</span>
+                            </div>
+                        </button>
+                        <button type="button" class="target-btn" data-target="colleague">
+                            <i class="fa-solid fa-handshake"></i>
+                            <div class="btn-text">
+                                <span class="title">타팀 동료</span>
+                                <span class="desc">정중하고 협조적으로</span>
+                            </div>
+                        </button>
+                        <button type="button" class="target-btn" data-target="client">
+                            <i class="fa-solid fa-building-user"></i>
+                            <div class="btn-text">
+                                <span class="title">고객 / 외부</span>
+                                <span class="desc">친절하고 신뢰감 있게</span>
+                            </div>
+                        </button>
+                        <button type="button" class="target-btn" data-target="team">
+                            <i class="fa-solid fa-people-group"></i>
+                            <div class="btn-text">
+                                <span class="title">팀 내 동료</span>
+                                <span class="desc">간결하고 실무적으로</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
 
-    <!-- 변환 버튼 -->
-    <button type="button" id="btnConvert" class="btn-convert">
-      <span class="spinner" id="loadingSpinner"></span>
-      <span id="btnText">비즈니스 말투로 변환하기</span>
-    </button>
+                <button id="convertBtn" class="primary-btn">
+                    <span class="btn-content">
+                        <i class="fa-solid fa-repeat"></i> 비즈니스 말투로 변환하기
+                    </span>
+                    <div class="btn-loader">
+                        <div class="spinner"></div>
+                        <span>변환하는 중...</span>
+                    </div>
+                </button>
+            </section>
 
-    <!-- 결과 영역 (변환 완료 시 노출) -->
-    <section class="result-panel" id="resultPanel">
-      <div class="result-header">
-        <span class="label">변환 결과</span>
-        <button type="button" id="btnCopy" class="btn-copy">
-          <span>📋</span> 복사하기
-        </button>
-      </div>
-      <textarea id="outputText" readonly></textarea>
-    </section>
-  </main>
+            <!-- Right Panel: Output Area -->
+            <section class="panel output-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-circle-check"></i> 변환 결과</h2>
+                    <button id="copyBtn" class="action-btn" title="클립보드 복사" disabled>
+                        <i class="fa-regular fa-copy"></i> 복사하기
+                    </button>
+                </div>
+                <div class="textarea-wrapper output-wrapper">
+                    <textarea id="outputText" placeholder="수신 대상을 선택하고 변환하기 버튼을 누르면 이 자리에 세련된 비즈니스 어조로 필터링된 메시지가 생성됩니다." readonly></textarea>
+                    
+                    <!-- Loading overlay for sleek presentation -->
+                    <div class="loading-overlay" id="loadingOverlay">
+                        <div class="loading-card">
+                            <div class="pulse-loader">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </div>
+                            <p>Solar-Pro3가 문장을 정제하고 있습니다...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
 
-  <!-- 토스트 알림창 -->
-  <div class="toast" id="toast">복사 완료! 필요한 곳에 붙여넣으세요.</div>
+        <footer class="app-footer">
+            <p>&copy; 2026 BizTalk Antigravity. Powered by Upstage Solar-Pro3 & FastAPI.</p>
+        </footer>
+    </div>
 
-  <script src="js/app.js"></script>
+    <!-- Notification Toast -->
+    <div class="toast" id="toast">
+        <i class="fa-solid fa-check-circle"></i>
+        <span id="toastMsg">성공적으로 복사되었습니다!</span>
+    </div>
+
+    <script src="js/app.js"></script>
 </body>
 </html>
