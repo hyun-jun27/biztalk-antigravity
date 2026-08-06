@@ -311,6 +311,7 @@ FastAPI는 Swagger UI를 기본 제공하므로 서버가 기동 중인 상태�
 1. `schemas.py` — 데이터 모델 정의(요청/응답 데이터 모델 정의)
 2. `templates.py` — 프롬프트 템플릿 작성(수신 대상별 프롬프트 템플릿 작성)
 3. `tone_converter.py` — 핵심 변환 로직 구현(LangChain + Solar-Pro3 연동)
+    * model="solar-pro3"
 4. `convert.py` — API 라우터 구현
 5. `main.py` — 메인 앱 설정(FastAPI 앱 + CORS 설정)
 6. 로컬 서버 실행 및 테스트 (`uvicorn main:app --reload`)
